@@ -96,7 +96,7 @@ export const m = {
   Low: 'Low',
   Tag: 'Tag',
   New_Tag: 'New Tag',
-   // ProblemList.vue
+  // ProblemList.vue
   Contest_Problem_List: 'Contest Problem List',
   // Contest.vue
   ContestTitle: 'Title',
@@ -105,6 +105,8 @@ export const m = {
   Contest_End_Time: 'End Time',
   Contest_Password: 'Password',
   Contest_Rule_Type: 'Contest Rule Type',
+  Contest_Virtual: 'Virtual Contest',
+  Contest_Virtual_Duration: 'Virtual Contest Duration in seconds',
   Real_Time_Rank: 'Real Time Rank',
   Contest_Status: 'Status',
   Allowed_IP_Ranges: 'Allowed IP Ranges',

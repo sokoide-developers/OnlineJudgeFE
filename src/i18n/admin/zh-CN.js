@@ -105,6 +105,8 @@ export const m = {
   Contest_End_Time: '结束时间',
   Contest_Password: '密码',
   Contest_Rule_Type: '规则',
+  Contest_Virtual: 'Virtual Contest',
+  Contest_Virtual_Duration: 'Virtual Contest Duration in seconds',
   Real_Time_Rank: '实时排名',
   Contest_Status: '状态',
   Allowed_IP_Ranges: '允许的 IP 范围',

@@ -1,6 +1,6 @@
-import Vue from 'vue'
 import store from '@/store'
 import axios from 'axios'
+import Vue from 'vue'
 
 Vue.prototype.$http = axios
 axios.defaults.baseURL = '/api'
@@ -162,6 +162,20 @@ export default {
       }
     })
   },
+  getContestUser (contestID) {
+    return ajax('contestuser', 'get', {
+      params: {
+        contest_id: contestID
+      }
+    })
+  },
+  startContestUser (contestID) {
+    return ajax('contestuser', 'post', {
+      data: {
+        contest_id: contestID
+      }
+    })
+  },
   getContestAccess (contestID) {
     return ajax('contest/access', 'get', {
       params: {
@@ -284,6 +298,7 @@ function ajax (url, method, options) {
   } else {
     params = data = {}
   }
+  console.info('ajax %O %O %O %O', url, method, params, data)
   return new Promise((resolve, reject) => {
     axios({
       url,

@@ -27,7 +27,8 @@
               </div>
               <div v-if="virtualContestFormVisible">
                 <p>If you start the Virtual Contest, a timer starts immediately. The contest duration is <b>{{friendly_virtual_contest_duration}}</b>. </p>
-                <Button type="info" @click="startVirtualContest">Start Virtual Contest</Button>
+                <p>{{message}}</p>
+                <Button type="info" @click="startVirtualContest(true)">Start Virtual Contest</Button>
               </div>
             </Panel>
             <Table :columns="columns" :data="contest_table" disabled-hover style="margin-bottom: 40px;"></Table>
@@ -92,6 +93,7 @@
     components: {},
     data () {
       return {
+        message: '',
         CONTEST_STATUS: CONTEST_STATUS,
         route_name: '',
         btnLoading: false,
@@ -144,6 +146,7 @@
           }, 1000)
         }
       })
+      this.startVirtualContest(false)
     },
     methods: {
       ...mapActions(['changeDomTitle']),
@@ -164,12 +167,44 @@
           this.btnLoading = false
         })
       },
-      startVirtualContest () {
+      startVirtualContest (startIfNotStarted) {
+        api.getContestUser(this.contestID).then((res) => {
+          console.info('getContestUser res.data: %O', res.data)
+          if (res.data.data == null) {
+            console.info('res.data.data == null')
+            if (startIfNotStarted) {
+              console.info('Creating...')
+              this.createVirtualContest()
+            }
+          } else {
+            // contestUser returned
+            let data = res.data.data
+            this.startVirtualContestSub(data.start_time, data.end_time)
+          }
+        }, (res) => {
+          console.error('getContestUser call failed, res:%O', res)
+        })
+      },
+      startVirtualContestSub (startTime, endTime) {
+        let now = this.now
+
+        console.info('now:%O, end:%O, diff:%O', now, moment(endTime), moment(endTime).diff(now))
+        if (moment(endTime).diff(now) > 0) {
+        } else {
+          this.message = `You alraedy startd it on ${startTime} and ended on ${endTime}`
+        }
+        console.log('Virtual Contest start_time %O, end_time %O', startTime, endTime)
+        this.$store.commit(types.CHANGE_CONTEST_ENDTIME, {end_time: endTime})
         this.$store.commit(types.CONTEST_ACCESS, {access: true})
-        let newEndTime = moment().add(this.contest.virtual_contest_duration, 'seconds')
-        this.$store.commit(types.CHANGE_CONTEST_ENDTIME, {end_time: newEndTime})
-        console.log('Virtual Contest started at %O', moment().format('hh:mm:ss'))
-        console.log('new end time: %O', newEndTime.format('hh:mm:ss'))
+      },
+      createVirtualContest () {
+        api.startContestUser(this.contest.id).then((res) => {
+          let data = res.data.data
+          this.startVirtualContestSub(data.start_time, data.end_time)
+          console.info('Successfully started contest user')
+        }, (res) => {
+          console.error('Failed to start contestuser')
+        })
       }
     },
     computed: {

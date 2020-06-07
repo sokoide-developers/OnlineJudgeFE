@@ -64,123 +64,132 @@
                   {{contest.rule_type}}
                 </Button>
               </li>
-            </ul>
-            </Col>
-            <Col :span="4" style="text-align: center">
-            <Tag type="dot" :color="CONTEST_STATUS_REVERSE[contest.status].color">{{$t('m.' + CONTEST_STATUS_REVERSE[contest.status].name.replace(/ /g, "_"))}}</Tag>
-            </Col>
-          </Row>
-        </li>
-      </ol>
-    </Panel>
-    <Pagination :total="total" :pageSize="limit" @on-change="getContestList" :current.sync="page"></Pagination>
-    </Col>
-  </Row>
+              <li v-if="contest.virtual_contest">
+                    Virtual Contest: {{contest.friendly_virtual_contest_duration}}
+              </li>
+              </ul>
+              </Col>
+              <Col :span="4" style="text-align: center">
+              <Tag type="dot" :color="CONTEST_STATUS_REVERSE[contest.status].color">{{$t('m.' + CONTEST_STATUS_REVERSE[contest.status].name.replace(/ /g, "_"))}}</Tag>
+              </Col>
+            </Row>
+          </li>
+        </ol>
+      </Panel>
+      <Pagination :total="total" :pageSize="limit" @on-change="getContestList" :current.sync="page"></Pagination>
+      </Col>
+    </Row>
 
-</template>
+  </template>
 
-<script>
-  import api from '@oj/api'
-  import { mapGetters } from 'vuex'
-  import utils from '@/utils/utils'
-  import Pagination from '@/pages/oj/components/Pagination'
-  import time from '@/utils/time'
-  import { CONTEST_STATUS_REVERSE, CONTEST_TYPE } from '@/utils/constants'
+  <script>
+    import api from '@oj/api'
+    import { mapGetters } from 'vuex'
+    import utils from '@/utils/utils'
+    import Pagination from '@/pages/oj/components/Pagination'
+    import time from '@/utils/time'
+    import { CONTEST_STATUS_REVERSE, CONTEST_TYPE } from '@/utils/constants'
 
-  const limit = 8
+    const limit = 8
 
-  export default {
-    name: 'contest-list',
-    components: {
-      Pagination
-    },
-    data () {
-      return {
-        page: 1,
-        query: {
-          status: '',
-          keyword: '',
-          rule_type: ''
+    export default {
+      name: 'contest-list',
+      components: {
+        Pagination
+      },
+      data () {
+        return {
+          page: 1,
+          query: {
+            status: '',
+            keyword: '',
+            rule_type: ''
+          },
+          limit: limit,
+          total: 0,
+          rows: '',
+          contests: [],
+          CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
+  //      for password modal use
+          cur_contest_id: ''
+        }
+      },
+      beforeRouteEnter (to, from, next) {
+        api.getContestList(0, limit).then((res) => {
+          next((vm) => {
+            // vm.contests = res.data.data.results
+            vm.contests = res.data.data.results.map(function (c) {
+              let mm = Math.floor(c.virtual_contest_duration / 60)
+              let ss = c.virtual_contest_duration % 60
+              c['friendly_virtual_contest_duration'] = `${mm} minutes ${ss} seconds`
+              return c
+            })
+            vm.total = res.data.data.total
+          })
+        }, (res) => {
+          next()
+        })
+  },
+  methods: {
+        init () {
+          let route = this.$route.query
+          this.query.status = route.status || ''
+          this.query.rule_type = route.rule_type || ''
+          this.query.keyword = route.keyword || ''
+          this.page = parseInt(route.page) || 1
+          this.getContestList()
         },
-        limit: limit,
-        total: 0,
-        rows: '',
-        contests: [],
-        CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
-//      for password modal use
-        cur_contest_id: ''
-      }
-    },
-    beforeRouteEnter (to, from, next) {
-      api.getContestList(0, limit).then((res) => {
-        next((vm) => {
-          vm.contests = res.data.data.results
-          vm.total = res.data.data.total
-        })
-      }, (res) => {
-        next()
-      })
-    },
-    methods: {
-      init () {
-        let route = this.$route.query
-        this.query.status = route.status || ''
-        this.query.rule_type = route.rule_type || ''
-        this.query.keyword = route.keyword || ''
-        this.page = parseInt(route.page) || 1
-        this.getContestList()
-      },
-      getContestList (page = 1) {
-        let offset = (page - 1) * this.limit
-        api.getContestList(offset, this.limit, this.query).then((res) => {
-          this.contests = res.data.data.results
-          this.total = res.data.data.total
-        })
-      },
-      changeRoute () {
-        let query = Object.assign({}, this.query)
-        query.page = this.page
-        this.$router.push({
-          name: 'contest-list',
-          query: utils.filterEmptyValue(query)
-        })
-      },
-      onRuleChange (rule) {
-        this.query.rule_type = rule
-        this.page = 1
-        this.changeRoute()
-      },
-      onStatusChange (status) {
-        this.query.status = status
-        this.page = 1
-        this.changeRoute()
-      },
-      goContest (contest) {
-        this.cur_contest_id = contest.id
-        if (contest.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
-          this.$error(this.$i18n.t('m.Please_login_first'))
-          this.$store.dispatch('changeModalStatus', {visible: true})
-        } else {
-          this.$router.push({name: 'contest-details', params: {contestID: contest.id}})
-        }
-      },
+        getContestList (page = 1) {
+          let offset = (page - 1) * this.limit
+          api.getContestList(offset, this.limit, this.query).then((res) => {
+            this.contests = res.data.data.results
+            this.total = res.data.data.total
+          })
+        },
+        changeRoute () {
+          let query = Object.assign({}, this.query)
+          query.page = this.page
+          this.$router.push({
+            name: 'contest-list',
+            query: utils.filterEmptyValue(query)
+          })
+        },
+        onRuleChange (rule) {
+          this.query.rule_type = rule
+          this.page = 1
+          this.changeRoute()
+        },
+        onStatusChange (status) {
+          this.query.status = status
+          this.page = 1
+          this.changeRoute()
+        },
+        goContest (contest) {
+          this.cur_contest_id = contest.id
+          if (contest.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
+            this.$error(this.$i18n.t('m.Please_login_first'))
+            this.$store.dispatch('changeModalStatus', {visible: true})
+          } else {
+            this.$router.push({name: 'contest-details', params: {contestID: contest.id}})
+          }
+        },
 
-      getDuration (startTime, endTime) {
-        return time.duration(startTime, endTime)
-      }
-    },
-    computed: {
-      ...mapGetters(['isAuthenticated', 'user'])
-    },
-    watch: {
-      '$route' (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.init()
+        getDuration (startTime, endTime) {
+          return time.duration(startTime, endTime)
         }
-      }
-    }
-
+  },
+  computed: {
+        ...mapGetters(['isAuthenticated', 'user'])
+  },
+  watch: {
+        '$route' (newVal, oldVal) {
+          if (newVal !== oldVal) {
+            this.init()
+          }
+        }
   }
+
+}
 </script>
 <style lang="less" scoped>
   #contest-card {

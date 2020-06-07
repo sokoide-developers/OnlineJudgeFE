@@ -1,7 +1,7 @@
+import { CONTEST_STATUS, CONTEST_TYPE, USER_TYPE } from '@/utils/constants'
+import api from '@oj/api'
 import moment from 'moment'
 import types from '../types'
-import api from '@oj/api'
-import { CONTEST_STATUS, USER_TYPE, CONTEST_TYPE } from '@/utils/constants'
 
 const state = {
   now: moment(),
@@ -48,7 +48,7 @@ const getters = {
   },
   contestMenuDisabled: (state, getters) => {
     if (getters.isContestAdmin) return false
-    if (state.contest.contest_type === CONTEST_TYPE.PUBLIC) {
+    if (state.contest.contest_type === CONTEST_TYPE.PUBLIC && state.contest.virtual_contest === false) {
       return getters.contestStatus === CONTEST_STATUS.NOT_START
     }
     return !state.access
@@ -69,6 +69,9 @@ const getters = {
   },
   passwordFormVisible: (state, getters) => {
     return state.contest.contest_type !== CONTEST_TYPE.PUBLIC && !state.access && !getters.isContestAdmin
+  },
+  virtualContestFormVisible: (state, getters) => {
+    return state.contest.virtual_contest === true && !state.access && !getters.isContestAdmin
   },
   contestStartTime: (state) => {
     return moment(state.contest.start_time)
@@ -111,6 +114,9 @@ const mutations = {
   [types.CHANGE_CONTEST_RANK_LIMIT] (state, payload) {
     state.rankLimit = payload.rankLimit
   },
+  [types.CHANGE_CONTEST_ENDTIME] (state, payload) {
+    state.contest.end_time = payload.end_time
+  },
   [types.CONTEST_ACCESS] (state, payload) {
     state.access = payload.access
   },
@@ -139,6 +145,9 @@ const actions = {
       api.getContest(rootState.route.params.contestID).then((res) => {
         resolve(res)
         let contest = res.data.data
+        if (contest.virtual_contest) {
+          commit(types.CONTEST_ACCESS, { access: false })
+        }
         commit(types.CHANGE_CONTEST, {contest: contest})
         commit(types.NOW, {now: moment(contest.now)})
         if (contest.contest_type === CONTEST_TYPE.PRIVATE) {

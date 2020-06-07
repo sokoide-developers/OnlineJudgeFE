@@ -25,6 +25,10 @@
                        @on-enter="checkPassword"/>
                 <Button type="info" @click="checkPassword">Enter</Button>
               </div>
+              <div v-if="virtualContestFormVisible">
+                <p>If you start the Virtual Contest, a timer starts immediately. The contest duration is <b>{{friendly_virtual_contest_duration}}</b>. </p>
+                <Button type="info" @click="startVirtualContest">Start Virtual Contest</Button>
+              </div>
             </Panel>
             <Table :columns="columns" :data="contest_table" disabled-hover style="margin-bottom: 40px;"></Table>
           </div>
@@ -159,6 +163,13 @@
         }, (res) => {
           this.btnLoading = false
         })
+      },
+      startVirtualContest () {
+        this.$store.commit(types.CONTEST_ACCESS, {access: true})
+        let newEndTime = moment().add(this.contest.virtual_contest_duration, 'seconds')
+        this.$store.commit(types.CHANGE_CONTEST_ENDTIME, {end_time: newEndTime})
+        console.log('Virtual Contest started at %O', moment().format('hh:mm:ss'))
+        console.log('new end time: %O', newEndTime.format('hh:mm:ss'))
       }
     },
     computed: {
@@ -170,7 +181,7 @@
       }),
       ...mapGetters(
         ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
-          'OIContestRealTimePermission', 'passwordFormVisible']
+          'OIContestRealTimePermission', 'passwordFormVisible', 'virtualContestFormVisible']
       ),
       countdownColor () {
         if (this.contestStatus) {
@@ -179,6 +190,11 @@
       },
       showAdminHelper () {
         return this.isContestAdmin && this.contestRuleType === 'ACM'
+      },
+      friendly_virtual_contest_duration () {
+        let mm = Math.floor(this.contest.virtual_contest_duration / 60)
+        let ss = this.contest.virtual_contest_duration % 60
+        return `${mm} minutes ${ss} seconds`
       }
     },
     watch: {

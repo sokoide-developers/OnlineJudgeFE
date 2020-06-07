@@ -319,7 +319,7 @@ function ajax (url, method, options) {
     params = data = {}
   }
   return new Promise((resolve, reject) => {
-    console.warn(
+    console.info(
       'ajax: url: %s, method:%s, params:%O, data:%O',
       url,
       method,

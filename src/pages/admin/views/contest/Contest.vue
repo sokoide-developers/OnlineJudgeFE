@@ -173,11 +173,6 @@ export default {
         this.$route.name === 'edit-contest' ? 'editContest' : 'createContest'
       let data = Object.assign({}, this.contest)
       let ranges = []
-      console.warn('data.virtual_contest: %O', data.virtual_contest)
-      console.warn(
-        'data.virtual_contest_duration: %O',
-        data.virtual_contest_duration
-      )
       for (let v of data.allowed_ip_ranges) {
         if (v.value !== '') {
           ranges.push(v.value)

@@ -21,6 +21,7 @@ export default keyMirror({
   'CHANGE_CONTEST_ITEM_VISIBLE': null,
   'CHANGE_RANK_FORCE_UPDATE': null,
   'CHANGE_CONTEST_RANK_LIMIT': null,
+  'CHANGE_CONTEST_ENDTIME': null,
   'CONTEST_ACCESS': null,
   'CLEAR_CONTEST': null
 })

@@ -144,9 +144,9 @@
           this.timer = setInterval(() => {
             this.$store.commit(types.NOW_ADD_1S)
           }, 1000)
+          this.startVirtualContest(false)
         }
       })
-      this.startVirtualContest(false)
     },
     methods: {
       ...mapActions(['changeDomTitle']),

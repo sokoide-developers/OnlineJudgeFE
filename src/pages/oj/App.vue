@@ -73,9 +73,24 @@
   }
 
 
+  // .content-app {
+  //   margin-top: 80px;
+  //   padding: 0 2%;
+  // }
+  @media screen and (max-width: 1200px) {
+  .content-app {
+    margin-top: 160px;
+    padding: 0 2%;
+    width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
   .content-app {
     margin-top: 80px;
     padding: 0 2%;
+    width: 100%;
+    }
   }
 
   .footer {

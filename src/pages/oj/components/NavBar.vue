@@ -58,6 +58,7 @@
         </div>
       </template>
       <template v-else>
+        <div class="btn-menu">
         <Dropdown class="drop-menu" @on-click="handleRoute" placement="bottom" trigger="click">
           <Button type="text" class="drop-menu-title">{{ user.username }}
             <Icon type="arrow-down-b"></Icon>
@@ -70,6 +71,7 @@
             <Dropdown-item divided name="/logout">{{$t('m.Logout')}}</Dropdown-item>
           </Dropdown-menu>
         </Dropdown>
+        </div>
       </template>
     </Menu>
     <Modal v-model="modalVisible" :width="400">
@@ -129,11 +131,11 @@
 
 <style lang="less" scoped>
   #header {
-    min-width: 1100px;
+    min-width: 300px;
     position: fixed;
     top: 0;
     left: 0;
-    height: 60px;
+    height: auto;
     width: 100%;
     z-index: 1000;
     background-color: #fff;

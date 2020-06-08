@@ -193,6 +193,9 @@
         } else {
           this.message = `You alraedy startd it on ${startTime} and ended on ${endTime}`
         }
+        this.timer = setInterval(() => {
+          this.$store.commit(types.NOW_ADD_1S)
+        }, 1000)
         console.log('Virtual Contest start_time %O, end_time %O', startTime, endTime)
         this.$store.commit(types.CHANGE_CONTEST_ENDTIME, {end_time: endTime})
         this.$store.commit(types.CONTEST_ACCESS, {access: true})

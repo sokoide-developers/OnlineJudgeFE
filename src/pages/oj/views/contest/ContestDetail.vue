@@ -25,10 +25,12 @@
                        @on-enter="checkPassword"/>
                 <Button type="info" @click="checkPassword">Enter</Button>
               </div>
-              <div v-if="virtualContestFormVisible">
-                <p>If you start the Virtual Contest, a timer starts immediately. The contest duration is <b>{{friendly_virtual_contest_duration}}</b>. </p>
+              <div>
                 <p>{{message}}</p>
-                <Button type="info" @click="startVirtualContest(true)">Start Virtual Contest</Button>
+                </div>
+              <div v-if="virtualContestFormVisible">
+                <p>If you start the Any-time Contest, a timer starts immediately. The contest duration is <b>{{friendly_anytime_contest_duration}}</b>. </p>
+                <Button type="info" @click="startVirtualContest(true)">Start Any-time Contest</Button>
               </div>
             </Panel>
             <Table :columns="columns" :data="contest_table" disabled-hover style="margin-bottom: 40px;"></Table>
@@ -229,9 +231,9 @@
       showAdminHelper () {
         return this.isContestAdmin && this.contestRuleType === 'ACM'
       },
-      friendly_virtual_contest_duration () {
-        let mm = Math.floor(this.contest.virtual_contest_duration / 60)
-        let ss = this.contest.virtual_contest_duration % 60
+      friendly_anytime_contest_duration () {
+        let mm = Math.floor(this.contest.anytime_contest_duration / 60)
+        let ss = this.contest.anytime_contest_duration % 60
         return `${mm} minutes ${ss} seconds`
       }
     },

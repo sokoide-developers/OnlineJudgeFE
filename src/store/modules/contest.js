@@ -48,7 +48,7 @@ const getters = {
   },
   contestMenuDisabled: (state, getters) => {
     if (getters.isContestAdmin) return false
-    if (state.contest.contest_type === CONTEST_TYPE.PUBLIC && state.contest.anytime_contest === false) {
+    if (state.contest.contest_type === CONTEST_TYPE.PUBLIC && state.contest.virtual_contest === false) {
       return getters.contestStatus === CONTEST_STATUS.NOT_START
     }
     return !state.access
@@ -70,8 +70,8 @@ const getters = {
   passwordFormVisible: (state, getters) => {
     return state.contest.contest_type !== CONTEST_TYPE.PUBLIC && !state.access && !getters.isContestAdmin
   },
-  virtualContestFormVisible: (state, getters) => {
-    return state.contest.anytime_contest === true && !state.access && !getters.isContestAdmin
+  anytimeContestFormVisible: (state, getters) => {
+    return state.contest.virtual_contest === true && !state.access && !getters.isContestAdmin
   },
   contestStartTime: (state) => {
     return moment(state.contest.start_time)
@@ -145,7 +145,7 @@ const actions = {
       api.getContest(rootState.route.params.contestID).then((res) => {
         resolve(res)
         let contest = res.data.data
-        if (contest.anytime_contest) {
+        if (contest.virtual_contest) {
           commit(types.CONTEST_ACCESS, { access: false })
         }
         commit(types.CHANGE_CONTEST, {contest: contest})

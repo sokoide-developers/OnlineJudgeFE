@@ -64,8 +64,8 @@
                   {{contest.rule_type}}
                 </Button>
               </li>
-              <li v-if="contest.anytime_contest">
-                    Any-time Contest: {{contest.friendly_anytime_contest_duration}}
+              <li v-if="contest.virtual_contest">
+                    Any-time Contest: {{contest.friendly_virtual_contest_duration}}
               </li>
               </ul>
               </Col>
@@ -119,9 +119,9 @@
           next((vm) => {
             // vm.contests = res.data.data.results
             vm.contests = res.data.data.results.map(function (c) {
-              let mm = Math.floor(c.anytime_contest_duration / 60)
-              let ss = c.anytime_contest_duration % 60
-              c['friendly_anytime_contest_duration'] = `${mm} minutes ${ss} seconds`
+              let mm = Math.floor(c.virtual_contest_duration / 60)
+              let ss = c.virtual_contest_duration % 60
+              c['friendly_virtual_contest_duration'] = `${mm} minutes ${ss} seconds`
               return c
             })
             vm.total = res.data.data.total

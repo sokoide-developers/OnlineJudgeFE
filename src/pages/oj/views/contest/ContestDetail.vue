@@ -25,11 +25,12 @@
                        @on-enter="checkPassword"/>
                 <Button type="info" @click="checkPassword">Enter</Button>
               </div>
-              <div>
+              <div v-if="anytimeContestEnded">
+                <p><b>You cannot re-join this Anytime Contest.</b></p>
                 <p>{{message}}</p>
-                </div>
-              <div v-if="virtualContestFormVisible">
-                <p>If you start the Any-time Contest, a timer starts immediately. The contest duration is <b>{{friendly_anytime_contest_duration}}</b>. </p>
+              </div>
+              <div v-if="anytimeContestFormVisible">
+                <p>If you start the Any-time Contest, a timer starts immediately. The contest duration is <b>{{friendly_virtual_contest_duration}}</b>. </p>
                 <Button type="info" @click="startVirtualContest(true)">Start Any-time Contest</Button>
               </div>
             </Panel>
@@ -96,6 +97,7 @@
     data () {
       return {
         message: '',
+        anytimeContestEnded: false,
         CONTEST_STATUS: CONTEST_STATUS,
         route_name: '',
         btnLoading: false,
@@ -193,7 +195,10 @@
         console.info('now:%O, end:%O, diff:%O', now, moment(endTime), moment(endTime).diff(now))
         if (moment(endTime).diff(now) > 0) {
         } else {
-          this.message = `You alraedy startd it on ${startTime} and ended on ${endTime}`
+          let startTimeFormat = moment(String(startTime)).format('MM/DD/YYYY hh:mm')
+          let endTimeFormat = moment(String(startTime)).format('MM/DD/YYYY hh:mm')
+          this.anytimeContestEnded = true
+          this.message = `You alraedy startd it on ${startTimeFormat} and ended on ${endTimeFormat}.`
         }
         this.timer = setInterval(() => {
           this.$store.commit(types.NOW_ADD_1S)
@@ -221,7 +226,7 @@
       }),
       ...mapGetters(
         ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
-          'OIContestRealTimePermission', 'passwordFormVisible', 'virtualContestFormVisible']
+          'OIContestRealTimePermission', 'passwordFormVisible', 'anytimeContestFormVisible']
       ),
       countdownColor () {
         if (this.contestStatus) {
@@ -231,9 +236,9 @@
       showAdminHelper () {
         return this.isContestAdmin && this.contestRuleType === 'ACM'
       },
-      friendly_anytime_contest_duration () {
-        let mm = Math.floor(this.contest.anytime_contest_duration / 60)
-        let ss = this.contest.anytime_contest_duration % 60
+      friendly_virtual_contest_duration () {
+        let mm = Math.floor(this.contest.virtual_contest_duration / 60)
+        let ss = this.contest.virtual_contest_duration % 60
         return `${mm} minutes ${ss} seconds`
       }
     },

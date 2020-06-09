@@ -85,7 +85,7 @@
           <el-col :span="8">
             <el-form-item :label="$t('m.Contest_Anytime')">
               <el-switch
-                v-model="contest.anytime_contest"
+                v-model="contest.virtual_contest"
                 active-text=""
                 inactive-text=""
               >
@@ -95,7 +95,7 @@
           <el-col :span="8">
             <el-form-item :label="$t('m.Contest_Anytime_Duration')">
               <el-input
-                v-model.number="contest.anytime_contest_duration"
+                v-model.number="contest.virtual_contest_duration"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -158,7 +158,7 @@ export default {
         real_time_rank: true,
         visible: true,
         anytime_contest: false,
-        anytime_contest_duration: 3600,
+        virtual_contest_duration: 3600,
         allowed_ip_ranges: [
           {
             value: ''

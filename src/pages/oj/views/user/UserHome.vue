@@ -46,6 +46,7 @@
           </div>
         </div>
         <div id="icons">
+        <p v-if="profile.pi_hide == true">
           <a :href="profile.github">
             <Icon type="social-github-outline" size="30"></Icon>
           </a>
@@ -55,6 +56,7 @@
           <a :href="profile.blog">
             <Icon class="icon" type="ios-world-outline" size="30"></Icon>
           </a>
+        </p>
         </div>
       </div>
     </Card>

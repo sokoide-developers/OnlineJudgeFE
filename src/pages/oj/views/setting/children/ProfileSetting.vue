@@ -95,6 +95,9 @@
           <Form-item label="Github">
             <Input v-model="formProfile.github"/>
           </Form-item>
+          <Form-item label="Show Your Personal Info">
+            <Input v-model="formProfile.pi_hide"/>
+          </Form-item>
         </Col>
       </Row>
     </Form>
@@ -132,7 +135,8 @@
           blog: '',
           school: '',
           github: '',
-          language: ''
+          language: '',
+          pi_hide: ''
         }
       }
     },

@@ -73,6 +73,12 @@ const getters = {
   anytimeContestFormVisible: (state, getters) => {
     return state.contest.virtual_contest === true && !state.access && !getters.isContestAdmin
   },
+  anytimeContestStartButtonEnabled: (state, getters) => {
+    let durationStart = moment(state.now) - moment(state.contest.start_time)
+    let durationEnd = moment(state.contest.end_time) - moment(state.now).add('seconds', state.contest.virtual_contest_duration)
+    // console.debug('durationStart: %O, durationEnd: %O', durationStart, durationEnd)
+    return state.contest.virtual_contest === true && !state.access && durationStart >= 0 && durationEnd >= 0
+  },
   contestStartTime: (state) => {
     return moment(state.contest.start_time)
   },

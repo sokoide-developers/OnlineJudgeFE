@@ -31,7 +31,7 @@
               </div>
               <div v-if="anytimeContestFormVisible">
                 <p>If you start the Any-time Contest, a timer starts immediately. The contest duration is <b>{{friendly_virtual_contest_duration}}</b>. </p>
-                <Button type="info" @click="startVirtualContest(true)">Start Any-time Contest</Button>
+                <Button v-bind:disabled="!anytimeContestStartButtonEnabled" type="info" @click="startVirtualContest(true)">Start Any-time Contest</Button>
               </div>
             </Panel>
             <Table :columns="columns" :data="contest_table" disabled-hover style="margin-bottom: 40px;"></Table>
@@ -223,7 +223,7 @@
       }),
       ...mapGetters(
         ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
-          'OIContestRealTimePermission', 'passwordFormVisible', 'anytimeContestFormVisible']
+          'OIContestRealTimePermission', 'passwordFormVisible', 'anytimeContestFormVisible', 'anytimeContestStartButtonEnabled']
       ),
       countdownColor () {
         if (this.contestStatus) {
